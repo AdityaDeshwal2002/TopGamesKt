@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("kotlin-kapt")
-    kotlin("kapt")
     alias(libs.plugins.ksp)
 
 
@@ -59,6 +58,6 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.android.epoxy)
-    ksp(libs.android.epoxy.processor)
+    implementation(libs.epoxy)
+    ksp(libs.epoxyProcessor)
 }

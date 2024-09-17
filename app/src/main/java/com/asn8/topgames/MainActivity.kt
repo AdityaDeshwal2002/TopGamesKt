@@ -1,18 +1,29 @@
 package com.asn8.topgames
 
-import GameAdapter
 import GameModel
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.asn8.topgames.databinding.ActivityMainBinding
+import com.airbnb.epoxy.EpoxyRecyclerView
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: GameViewModel
+    private lateinit var gameEpoxyController: GameEpoxyController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -20,19 +31,19 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
 
-        val gameList:ArrayList<GameModel> = ArrayList()
-        gameList.add(GameModel(R.drawable.card1,"GAmes1"))
-        gameList.add(GameModel(R.drawable.card2,"Games2"))
-        gameList.add(GameModel(R.drawable.card3,"Games3"))
-        gameList.add(GameModel(R.drawable.card4,"Games4"))
-        gameList.add(GameModel(R.drawable.card5,"Games5"))
-        gameList.add(GameModel(R.drawable.card6,"Games6"))
+        viewModel = ViewModelProvider(this).get(GameViewModel::class.java)
 
-        val adapter = GameAdapter(gameList)
-        recyclerView.adapter = adapter
+        gameEpoxyController = GameEpoxyController{ gameText ->
+            Toast.makeText(this,gameText,Toast.LENGTH_SHORT).show()
+        }
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.setController(gameEpoxyController)
+
+        viewModel.gameList.observe(this){games ->
+            gameEpoxyController.setData(games)
+        }
 
     }
 }
